@@ -30,7 +30,7 @@ which are SQLite databases.
 
 See L<HTTP::Cookies>.
 
-=head1 The Chrome cookies table
+=head2 The Chrome cookies table
 
 	creation_utc    INTEGER NOT NULL UNIQUE PRIMARY KEY
 	host_key        TEXT NOT NULL
@@ -72,7 +72,7 @@ use vars qw( $VERSION );
 use constant TRUE  => 1;
 use constant FALSE => 0;
 
-$VERSION = '0.99_01';
+$VERSION = '0.99_02';
 
 use Data::Dumper;
 use DBI qw(:sql_types);
@@ -245,7 +245,7 @@ sub _insert
 	my $sth = $self->{insert_sth};
 	
 	my $creation    = $self->_get_utc_microseconds( $creation_offset++ );
-	print STDERR "creation is [$creation]\n";
+	#print STDERR "creation is [$creation]\n";
 	my $last_access = $self->_get_utc_microseconds;
 	my $httponly    = 0;
 	
