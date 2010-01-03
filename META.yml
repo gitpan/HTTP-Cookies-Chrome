@@ -1,6 +1,6 @@
 --- #YAML:1.0
 name:               HTTP-Cookies-Chrome
-version:            0.99_02
+version:            0.99_03
 abstract:           A subclass of HTTP::Cookies to handle Chrome
 author:
     - brian d foy <bdfoy@cpan.org>
@@ -11,10 +11,11 @@ configure_requires:
 build_requires:
     ExtUtils::MakeMaker:  0
 requires:
-    DBD::SQLite:  0
-    DBI:          0
-    POSIX:        0
-    Test::More:   0
+    DBD::SQLite:    0
+    DBI:            0
+    HTTP::Cookies:  0
+    POSIX:          0
+    Test::More:     0
 no_index:
     directory:
         - t
