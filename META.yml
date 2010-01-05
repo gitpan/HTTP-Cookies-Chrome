@@ -1,6 +1,6 @@
 --- #YAML:1.0
 name:               HTTP-Cookies-Chrome
-version:            0.99_05
+version:            0.99_06
 abstract:           A subclass of HTTP::Cookies to handle Chrome
 author:
     - brian d foy <bdfoy@cpan.org>
