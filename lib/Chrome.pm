@@ -9,6 +9,8 @@ no warnings;
 
 use POSIX;
 
+=encoding utf8
+
 =head1 NAME
 
 HTTP::Cookies::Chrome - Cookie storage and management for Google Chrome
@@ -72,7 +74,7 @@ use vars qw( $VERSION );
 use constant TRUE  => 1;
 use constant FALSE => 0;
 
-$VERSION = '0.99_07';
+$VERSION = '0.99_08';
 
 use Data::Dumper;
 use DBI qw(:sql_types);
@@ -106,7 +108,7 @@ sub _get_rows
 	my @rows = map { bless $_, 'HTTP::Cookies::Chrome::Record' }
 		@{ $sth->fetchall_arrayref };
 	
-	#print STDERR Dumper( \@rows );
+	$dbh->disconnect;
 	
 	\ @rows;
 	}
@@ -151,7 +153,8 @@ sub save
 	$self->_create_table;
 	$self->_prepare_insert;
 	$self->_filter_cookies;
-	
+	$dbh->disconnect;
+
 	1;
 	}
 
