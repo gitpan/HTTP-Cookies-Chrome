@@ -74,17 +74,19 @@ use vars qw( $VERSION );
 use constant TRUE  => 1;
 use constant FALSE => 0;
 
-$VERSION = '0.99_08';
+$VERSION = '0.99_09';
 
-use Data::Dumper;
-use DBI qw(:sql_types);
+use DBI;
 
 sub _dbh { $_[0]->{dbh} }
 
 sub _connect
 	{
 	my( $self, $file ) = @_;
-	my $dbh = DBI->connect( "dbi:SQLite:dbname=$file", '', '' );
+	my $dbh = DBI->connect( "dbi:SQLite:dbname=$file", '', '',
+		{
+		sqlite_see_if_its_a_number => 1,
+		} );
 	$_[0]->{dbh} = $dbh;
 	}
 	
@@ -95,13 +97,6 @@ sub _get_rows
 	my $dbh = $self->_connect( $file );
 	
 	my $sth = $dbh->prepare( 'SELECT * FROM cookies' );
-
-	# Without this, Perl converts the long numbers into
-	# scientific notation
-	foreach my $column ( 1, 6 .. 9 )
-		{
-		$sth->bind_col( $column, undef, SQL_INTEGER );
-		}
 		
 	$sth->execute;
 	
@@ -246,16 +241,10 @@ sub _insert
 	my $sth = $self->{insert_sth};
 	
 	my $creation    = $self->_get_utc_microseconds( $creation_offset++ );
-	#print STDERR "creation is [$creation]\n";
+
 	my $last_access = $self->_get_utc_microseconds;
 	my $httponly    = 0;
-	
-	$sth->bind_param( 1, $creation,    SQL_INTEGER );
-	$sth->bind_param( 6, $expires,     SQL_INTEGER );
-	$sth->bind_param( 7, $secure,      SQL_INTEGER );
-	$sth->bind_param( 8, $httponly,    SQL_INTEGER );
-	$sth->bind_param( 9, $last_access, SQL_INTEGER );
-	
+
 	$sth->execute(
 		$creation,      # 1
 		$domain,        # 2
@@ -275,7 +264,7 @@ sub _get_utc_microseconds
 	{	
 	no warnings 'uninitialized';
 	use bignum;
-	POSIX::strftime( '%s', gmtime() ) * 1_000_000 + $_[1];
+	POSIX::strftime( '%s', gmtime() ) * 1_000_000 + ($_[1]//0);
 	}
 
 BEGIN {
@@ -305,6 +294,7 @@ sub AUTOLOAD
 	$self->[ $columns{$method} ];
 	}
 
+sub DESTROY { return 1 }
 }
 
 1;
