@@ -1,3 +1,4 @@
+.releaserc
 Changes
 examples/placeholder.pl
 lib/HTTP/Cookies/Chrome.pm
@@ -14,4 +15,5 @@ t/pod_coverage.t
 t/save.t
 t/test_manifest
 test-corpus/Cookies
-META.yml                                 Module meta-data (added by MakeMaker)
+META.yml                                 Module YAML meta-data (added by MakeMaker)
+META.json                                Module JSON meta-data (added by MakeMaker)

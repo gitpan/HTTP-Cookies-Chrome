@@ -30,6 +30,8 @@ This package overrides the C<load()> and C<save()> methods of
 C<HTTP::Cookies> so it can work with Google Chrome cookie files,
 which are SQLite databases.
 
+NOTE: This does not handle encrypted cookies files yet (https://github.com/briandfoy/HTTP-Cookies-Chrome/issues/1).
+
 See L<HTTP::Cookies>.
 
 =head2 The Chrome cookies table
@@ -60,7 +62,7 @@ Jon Orwant pointed out the problem with dates too far in the future
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright (c) 2009-2010 brian d foy.  All rights reserved.
+Copyright (c) 2009-2014 brian d foy. All rights reserved.
 
 This program is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.
@@ -74,14 +76,13 @@ use vars qw( $VERSION );
 use constant TRUE  => 1;
 use constant FALSE => 0;
 
-$VERSION = '0.99_09';
+$VERSION = '1.001';
 
 use DBI;
 
 sub _dbh { $_[0]->{dbh} }
 
-sub _connect
-	{
+sub _connect {
 	my( $self, $file ) = @_;
 	my $dbh = DBI->connect( "dbi:SQLite:dbname=$file", '', '',
 		{
@@ -90,8 +91,7 @@ sub _connect
 	$_[0]->{dbh} = $dbh;
 	}
 	
-sub _get_rows
-	{
+sub _get_rows {
 	my( $self, $file ) = @_;
 	
 	my $dbh = $self->_connect( $file );
@@ -108,8 +108,7 @@ sub _get_rows
 	\ @rows;
 	}
 	
-sub load
-	{
+sub load {
     my( $self, $file ) = @_;
 
     $file ||= $self->{'file'} || return;
@@ -117,8 +116,7 @@ sub load
 # $cookie_jar->set_cookie( $version, $key, $val, $path, 
 # $domain, $port, $path_spec, $secure, $maxage, $discard, \%rest )
 
- 	foreach my $row ( @{ $self->_get_rows( $file ) } )
-    	{
+ 	foreach my $row ( @{ $self->_get_rows( $file ) } ) {
 		$self->set_cookie(
 			undef, 
 			$row->name,
@@ -137,8 +135,7 @@ sub load
     1;
 	}
 
-sub save
-	{
+sub save {
     my( $self, $new_file ) = @_;
 
     $new_file ||= $self->{'file'} || return;
@@ -153,8 +150,7 @@ sub save
 	1;
 	}
 
-sub _filter_cookies
-	{
+sub _filter_cookies {
     my( $self ) = @_;
 
     $self->scan(
@@ -168,8 +164,7 @@ sub _filter_cookies
 	
 				$expires = do {
 					unless( $expires ) { 0 }
-					else
-						{
+					else {
 						$expires * 1_000_000
 						}
 					};
@@ -191,8 +186,7 @@ sub _filter_cookies
 
 	}
 
-sub _create_table
-	{
+sub _create_table {
 	my( $self ) = @_;
 
 	$self->_dbh->do(  'DROP TABLE IF EXISTS cookies' );
@@ -212,8 +206,7 @@ CREATE TABLE cookies (
 SQL
 	}
 	
-sub _prepare_insert
-	{
+sub _prepare_insert {
 	my( $self ) = @_;
 	
 	my $sth = $self->{insert_sth} = $self->_dbh->prepare_cached( <<'SQL' );
@@ -233,8 +226,7 @@ SQL
 {
 my $creation_offset = 0;
 
-sub _insert
-	{
+sub _insert {
 	my( $self, 					
 		$domain, $key, $value, $path, $expires, $secure, ) = @_;
 		
@@ -260,8 +252,7 @@ sub _insert
 	}
 }
 
-sub _get_utc_microseconds
-	{	
+sub _get_utc_microseconds {	
 	no warnings 'uninitialized';
 	use bignum;
 	POSIX::strftime( '%s', gmtime() ) * 1_000_000 + ($_[1]//0);
@@ -283,8 +274,7 @@ my %columns = map { state $n = 0; $_, $n++ } qw(
 	last_access_utc 
 	);
 	
-sub AUTOLOAD
-	{
+sub AUTOLOAD {
 	my( $self ) = @_;
 	my $method = $AUTOLOAD;
 	$method =~ s/.*:://;

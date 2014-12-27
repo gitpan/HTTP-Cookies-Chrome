@@ -1,26 +1,19 @@
---- #YAML:1.0
-name:               HTTP-Cookies-Chrome
-version:            0.99_09
-abstract:           A subclass of HTTP::Cookies to handle Chrome
+---
+abstract: 'A subclass of HTTP::Cookies to handle Chrome'
 author:
-    - brian d foy <bdfoy@cpan.org>
-license:            perl
-distribution_type:  module
-configure_requires:
-    ExtUtils::MakeMaker:  0
-build_requires:
-    ExtUtils::MakeMaker:  0
-requires:
-    DBD::SQLite:    1.32
-    DBI:            0
-    HTTP::Cookies:  0
-    POSIX:          0
-    Test::More:     0
-no_index:
-    directory:
-        - t
-        - inc
-generated_by:       ExtUtils::MakeMaker version 6.55_02
+  - 'brian d foy <bdfoy@cpan.org>'
+build_requires: {}
+dynamic_config: 1
+generated_by: 'ExtUtils::MakeMaker version 6.66, CPAN::Meta::Converter version 2.132830'
+license: perl
 meta-spec:
-    url:      http://module-build.sourceforge.net/META-spec-v1.4.html
-    version:  1.4
+  url: http://module-build.sourceforge.net/META-spec-v1.4.html
+  version: 1.4
+name: HTTP-Cookies-Chrome
+no_index:
+  directory:
+    - t
+    - inc
+resources:
+  repository: https://github.com/briandfoy/HTTP-Cookies-Chrome.git
+version: 1.001
